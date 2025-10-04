@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pastelería</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Montserrat:wght@500;700&display=swap");
+
+    body {
+      font-family: "Montserrat", sans-serif;
+      background: url("https://images.unsplash.com/photo-1608138406232-0e01f9b0f9a0?auto=format&fit=crop&w=1920&q=80")
+        no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      background: rgba(17, 17, 17, 0.9);
+      padding: 40px 30px 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(255, 69, 0, 0.6);
+      text-align: center;
+      width: 350px;
+      backdrop-filter: blur(5px);
+    }
+
+    h1 {
+      color: #ff4500;
+      font-size: 2.4em;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      text-shadow: 0 0 15px #ff2e00;
+    }
+
+    /* 🕒 Reloj en la esquina superior derecha */
+    .clock {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-family: "Orbitron", sans-serif;
+      font-size: 1.1em;
+      color: #00ffcc;
+      text-shadow: 0 0 8px #00ffff, 0 0 15px #00ffcc;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 255, 204, 0.4);
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      background: #222;
+      border-radius: 10px;
+      margin-top: 20px;
+      padding: 5px 10px;
+      transition: 0.3s;
+    }
+
+    .input-group:hover {
+      background: #2a2a2a;
+      box-shadow: 0 0 10px #ff4500;
+    }
+
+    .input-group img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px;
+      font-size: 17px;
+      border: none;
+      background: transparent;
+      color: #fff;
+      outline: none;
+      text-align: center;
+    }
+
+    /* Caja del resultado */
+    .resultado-box {
+      margin-top: 30px;
+      background: linear-gradient(145deg, #1a1a1a, #222);
+      border: 2px solid #ff4500;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        box-shadow: 0 0 10px rgba(255, 69, 0, 0.3);
+      }
+      to {
+        box-shadow: 0 0 25px rgba(255, 69, 0, 0.8);
+      }
+    }
+
+    .resultado-texto {
+      color: #ffae00;
+      font-size: 1.7em;
+      text-shadow: 0 0 10px #ff0000;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .resaltar {
+      transform: scale(1.1);
+      color: #fff;
+      text-shadow: 0 0 20px #ffae00;
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        width: 90%;
+      }
+      h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="container">
+    <div id="clock" class="clock">00:00:00</div>
+    <h1>Pastelería</h1>
+
+    <div class="input-group">
+      <img src="https://cdn-icons-png.flaticon.com/512/3480/3480534.png" alt="Pastel" />
+      <input type="number" id="valor1" placeholder="Cantidad de Pasteles" oninput="calcular()" />
+    </div>
+
+    <div class="input-group">
+      <img src="https://cdn-icons-png.flaticon.com/512/857/857681.png" alt="Flauta" />
+      <input type="number" id="valor2" placeholder="Cantidad de Flautas" oninput="calcular()" />
+    </div>
+
+    <div class="resultado-box">
+      <div id="resultado" class="resultado-texto">Total: $0</div>
+    </div>
+  </div>
+
+  <script>
+    // --- Cálculo automático ---
+    function calcular() {
+      const pasteles = parseFloat(document.getElementById("valor1").value) || 0;
+      const flautas = parseFloat(document.getElementById("valor2").value) || 0;
+      const total = pasteles * 1500 + flautas * 2000;
+
+      const resultado = document.getElementById("resultado");
+      resultado.textContent =
+        "Total: " +
+        total.toLocaleString("es-CO", {
+          style: "currency",
+          currency: "COP",
+          minimumFractionDigits: 0,
+        });
+      resultado.classList.add("resaltar");
+      setTimeout(() => resultado.classList.remove("resaltar"), 400);
+    }
+
+    // --- Reloj digital UTC-5 ---
+    function actualizarReloj() {
+      const ahora = new Date();
+      const utc = ahora.getTime() + ahora.getTimezoneOffset() * 60000;
+      const utc5 = new Date(utc - 5 * 3600000);
+
+      const horas = String(utc5.getHours()).padStart(2, "0");
+      const minutos = String(utc5.getMinutes()).padStart(2, "0");
+      const segundos = String(utc5.getSeconds()).padStart(2, "0");
+
+      document.getElementById("clock").textContent = `${horas}:${minutos}:${segundos}`;
+    }
+
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
+  </script>
+</body>
+</html>
